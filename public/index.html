@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sama Storefront — Browse &amp; Shop</title>
+  <meta name="description"
+    content="Discover premium products at Sama Storefront. Browse categories, read ratings, like your favorites, and order online.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <!-- Topbar Header -->
+  <header class="store-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-logo">🏪</div>
+        <div class="brand-text">
+          <span class="logo-main">Sama</span>
+          <span class="logo-sub">Storefront</span>
+        </div>
+      </div>
+
+      <div class="search-bar-container">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+        <input type="text" id="store-search" placeholder="Search products..." oninput="filterStoreProducts()">
+      </div>
+
+      <div class="header-actions">
+        <button class="btn btn-primary cart-trigger" onclick="toggleCartModal(true)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="9" cy="21" r="1" />
+            <circle cx="20" cy="21" r="1" />
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+          </svg>
+          Cart <span class="cart-count-badge" id="cart-count-badge">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero / Category bar -->
+  <section class="store-hero">
+    <div class="hero-content">
+      <h1>Premium Selection</h1>
+      <p>Hand-picked high-quality inventory curated just for you.</p>
+    </div>
+    <div class="category-filters-container">
+      <div class="category-filters" id="store-category-filters">
+        <button class="cat-pill active" onclick="selectStoreCategory('')">All Products</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Storefront Content -->
+  <main class="store-container">
+    <div class="products-grid" id="store-products-grid">
+      <!-- Products load here dynamically -->
+      <div class="store-loading">Loading items...</div>
+    </div>
+  </main>
+
+  <!-- Footer with support contacts -->
+  <footer class="store-footer">
+    <div class="footer-container">
+      <div class="footer-info">
+        <h3>🏪 Sama Storefront</h3>
+        <p>Your one-stop shop. Fast deliveries, secure checkouts, and 24/7 client support.</p>
+      </div>
+      <div class="footer-contacts">
+        <h4>Need assistance or facing a problem?</h4>
+        <div class="footer-contacts-list">
+          <div class="footer-contact-item">
+            <span class="footer-icon">📞</span>
+            <div>
+              <strong>Call Us:</strong>
+              <a href="tel:+254700111222">+254 726064668</a> or <a href="tel:+254726064668">+254 726064668</a>
+            </div>
+          </div>
+          <div class="footer-contact-item">
+            <span class="footer-icon">💬</span>
+            <div>
+              <strong>WhatsApp Support:</strong>
+              <a href="https://wa.me/254726064668" target="_blank">+254 726064668</a>
+            </div>
+          </div>
+          <div class="footer-contact-item">
+            <span class="footer-icon">✉️</span>
+            <div>
+              <strong>Email Support:</strong>
+              <a href="mailto:isamaware@gmail.com">isamaware@gmail.com</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2026 Sama Storefront. All rights reserved.
+    </div>
+  </footer>
+
+  <!-- ===== PRODUCT DETAIL MODAL ===== -->
+  <div class="modal-overlay" id="product-detail-modal">
+    <div class="modal modal-sm product-detail-modal-content">
+      <div class="modal-header">
+        <h2 id="product-detail-title">Product Details</h2>
+        <button class="modal-close" onclick="closeProductDetailModal()">✕</button>
+      </div>
+      <div class="modal-body" id="product-detail-body">
+        <!-- Content injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart Drawer/Modal -->
+  <div class="modal-overlay" id="cart-modal">
+    <div class="modal modal-sm cart-modal-content">
+      <div class="modal-header">
+        <h2 id="cart-modal-title-text">Your Shopping Cart</h2>
+        <button class="modal-close" onclick="toggleCartModal(false)">✕</button>
+      </div>
+      <div class="modal-body cart-modal-body">
+        <!-- STEP 1: REVIEW CART ITEMS -->
+        <div id="checkout-step-1" class="checkout-step active">
+          <div class="cart-items-list" id="cart-items-list">
+            <!-- Cart items load here dynamically -->
+            <div class="empty-cart-state">
+              <div class="empty-cart-icon">🛒</div>
+              <p>Your cart is empty. Start shopping!</p>
+            </div>
+          </div>
+
+          <div class="cart-summary" id="cart-summary" style="display:none">
+            <div class="summary-row">
+              <span>Total Items</span>
+              <span id="cart-total-qty">0</span>
+            </div>
+            <div class="summary-row total-row">
+              <span>Total Amount</span>
+              <span id="cart-total-amount">Ksh 0</span>
+            </div>
+            <button class="btn btn-primary checkout-btn" onclick="goToCheckoutStep(2)">
+              Proceed to Checkout
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 2: SHIPPING & PAYMENT DETAILS -->
+        <div id="checkout-step-2" class="checkout-step" style="display:none;">
+          <form id="checkout-form" onsubmit="processCheckout(event)">
+            <div class="checkout-section-title">1. Shipping Info</div>
+            <div class="form-group checkout-form-group">
+              <label>Full Name *</label>
+              <input type="text" id="cust-name" placeholder="Kelvin" required />
+            </div>
+            <div class="form-group checkout-form-group">
+              <label>Phone Number *</label>
+              <input type="tel" id="cust-phone" placeholder="e.g. 0726064668" required />
+            </div>
+            <div class="form-group checkout-form-group">
+              <label>Delivery Address *</label>
+              <input type="text" id="cust-address" placeholder="Apartment, Street, City" required />
+            </div>
+
+            <div class="checkout-section-title" style="margin-top: 14px;">2. Payment Method</div>
+            <div class="payment-methods-grid">
+              <label class="payment-card-label">
+                <input type="radio" name="payment-method-radio" value="mpesa" checked onchange="togglePaymentInputs('mpesa')" />
+                <div class="payment-card-content">
+                  <span class="pay-icon">📱</span>
+                  <span class="pay-name">M-Pesa</span>
+                </div>
+              </label>
+            </div>
+
+            <!-- Call to Order -->
+            <div id="mpesa-payment-fields" class="conditional-payment-fields" style="margin-top: 12px;">
+              <div class="bank-details-box" style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 10px; padding: 18px; font-size: 14px; text-align: center;">
+                <div style="font-size: 30px; margin-bottom: 8px;">📞</div>
+                <div style="font-weight: 700; font-size: 16px; margin-bottom: 6px;">Call to Order</div>
+                <p style="margin: 0 0 12px; color: var(--text-secondary);">To place your order, please call us on the number below:</p>
+                <a href="tel:0726064668" style="display: inline-block; font-size: 24px; font-weight: 800; color: var(--green); text-decoration: none; letter-spacing: 1px;">0726064668</a>
+              </div>
+            </div>
+
+            <!-- Order Summary before placing -->
+            <div class="checkout-section-title" style="margin-top: 14px;">3. Order Summary</div>
+            <div id="checkout-order-summary" class="checkout-order-summary-box">
+              <!-- Populated by JS -->
+            </div>
+
+            <div class="checkout-footer-actions">
+              <button type="button" class="btn btn-ghost" onclick="goToCheckoutStep(1)"
+                style="flex: 1; justify-content: center;">Back</button>
+              <button type="submit" class="btn btn-primary" style="flex: 2; justify-content: center;">Place Order &amp;
+                Pay</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- STEP 3: RECEIPT / ORDER SUCCESS -->
+        <div id="checkout-step-3" class="checkout-step" style="display:none;">
+          <div class="order-success-container">
+            <div class="success-checkmark">
+              <div class="checkmark-circle">✓</div>
+            </div>
+            <h2>Order Placed Successfully!</h2>
+            <p class="success-intro">Thank you for your purchase! We are preparing your items.</p>
+
+            <!-- Receipt Box -->
+            <div class="receipt-box" id="receipt-box">
+              <div class="receipt-header-bar">
+                <span class="receipt-store-name">🏪 Sama Storefront</span>
+                <span class="receipt-label">RECEIPT</span>
+              </div>
+              <div class="receipt-meta">
+                <div class="receipt-line"><span>Order ID:</span><span id="receipt-order-id"
+                    style="font-family:monospace;font-weight:700">INV-0000</span></div>
+                <div class="receipt-line"><span>Customer:</span><span id="receipt-customer-name">—</span></div>
+                <div class="receipt-line"><span>Phone:</span><span id="receipt-customer-phone">—</span></div>
+                <div class="receipt-line"><span>Payment:</span><span id="receipt-payment-method">—</span></div>
+                <div class="receipt-line"><span>Date:</span><span id="receipt-date">—</span></div>
+              </div>
+              <div class="receipt-divider"></div>
+              <div class="receipt-items-title">Products Purchased</div>
+              <div id="receipt-items-list" class="receipt-items-list">
+                <!-- Items injected by JS -->
+              </div>
+              <div class="receipt-divider"></div>
+              <div class="receipt-total-row">
+                <span>TOTAL PAID</span>
+                <span id="receipt-total" style="font-weight:800;color:var(--green)">Ksh 0</span>
+              </div>
+            </div>
+
+            <div class="mpesa-prompt-notice" id="mpesa-prompt-notice" style="display:none;">
+              <div class="mpesa-prompt-icon">📲</div>
+              <div class="mpesa-prompt-text">
+                <strong>Order Awaiting Payment Verification</strong>
+                <p>Please make sure you have sent the payment to one of the M-Pesa/KCB channels shown in the checkout
+                  panel. Your order will be fulfilled as soon as payment is confirmed.</p>
+              </div>
+            </div>
+
+            <div class="call-banner">
+              <div class="call-banner-icon">📞</div>
+              <div class="call-banner-text">
+                <div class="call-title">Call to finalize delivery:</div>
+                <div class="call-phone"><a href="tel:+254700111222">+254 700 111 222</a></div>
+              </div>
+            </div>
+
+            <div class="support-contacts-title">Questions? Contact support:</div>
+            <div class="support-contacts-grid">
+              <div class="support-contact-card">
+                <span class="contact-icon">💬</span>
+                <span class="contact-label">WhatsApp</span>
+                <a href="https://wa.me/254799999999" target="_blank" class="contact-value">+254 799 999 999</a>
+              </div>
+              <div class="support-contact-card">
+                <span class="contact-icon">✉️</span>
+                <span class="contact-label">Email Support</span>
+                <a href="mailto:support@samahardware.com" class="contact-value">support@samahardware.com</a>
+              </div>
+              <div class="support-contact-card full-width">
+                <span class="contact-icon">📍</span>
+                <span class="contact-label">Office Address</span>
+                <span class="contact-value">Sama Hardware Plaza, Nairobi, Kenya</span>
+              </div>
+            </div>
+
+            <button class="btn btn-primary checkout-btn" id="print-storefront-receipt-btn"
+              style="margin-top: 16px; background: linear-gradient(135deg, var(--blue), var(--purple));">
+              🖨️ Print Invoice Receipt
+            </button>
+            <button class="btn btn-secondary checkout-btn" onclick="resetStorefrontCart()"
+              style="margin-top: 8px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: white;">
+              Close &amp; Finish
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast notifications -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
