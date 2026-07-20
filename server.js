@@ -10,7 +10,7 @@ function hashPassword(pwd) {
 }
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const DB_PATH = path.join(__dirname, 'inventory.db');
 
 app.use(cors());
